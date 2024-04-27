@@ -1,0 +1,112 @@
+# find version used:
+$PSVersionTable
+
+# create transcript file
+Start-Transcript
+
+# close the transcript recording
+Stop-Transcript
+
+#	TO Update PowerShell
+import-module pswindowsupdate -force
+winget search Microsoft.PowerShell
+winget install --id Microsoft.Powershell --source winget
+msiexec.exe /package PowerShell-7.4.1-win-x64.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1 ADD_PATH=1
+
+# Get list of installed hotfixes
+Get-HotFix
+
+# Get BIOS info of computer named myComputerName
+Get-WMIObject Win32_BIOS -ComputerName myComputerName
+
+# Show loaded modules
+Get-Module
+
+# Show most recent ver of Az
+Find-Module Az 
+Install
+Update
+Get-Date
+Get-TimeZone
+
+Get-ComputerInfo
+
+# restart myComputerName
+Restart-Computer -ComputerName myComputerName -wait -for PowerShell  ; Write-Host "done"
+Restart-Computer -force
+
+# Networking Stuff
+Get-NetIPAddress
+Get-NetAdapter
+Get DnsServer
+Get-DnsClientDohServerAddress
+
+
+    #SET SLEEP SETTINGS OFF
+powercfg /change standby-timeout-ac 0
+powercfg /change standby-timeout-dc 0
+powercfg /change hibernate-timeout-ac 0
+powercfg /change hibernate-timeout-dc 0
+
+#ADD NEWS PRINTERS
+add-printer -connectionname \\192.168.34.249\myComputerName -asjob
+
+#ADD SALES PRINTERS
+add-printer -connectionname \\192.168.34.249\myComputerName -asjob
+
+# Remove TrendMicro services
+net stop cetasvc && net stop "Trend Micro Endpoint Basecamp" && net stop "Trend Micro Web Service Communicator" && sc delete cetasvc && sc delete "Trend Micro Endpoint Basecamp" && sc delete "Trend Micro Web Service Communicator"
+
+# run ical when print to does not work
+icacls "C:\programdata\bitcentral\nrcsplugin\enps\config.xml" /inheritance:e
+
+# Test if computer myComputerName can be pinged
+Test-Connection -ComputerName myComputerName -Quiet -Count 1
+
+#   Join computer to local domain
+# Add-Computer -DomainName %domainname% -Credential (Get-Credential)
+Add-Computer -DomainName myDomain.local -Credential (Get-Credential)
+
+# Scans OS for corrupt files and attempts to repair nondestructively
+DISM.exe /Online /Cleanup-image /Restorehealth
+
+#    System file checker
+sfc /scannow
+
+# Get list of available Windows Updates
+Get-WindowsUpdate
+
+# Install the available Updates
+Install-WindowsUpdate -acceptall -ignorereboot
+Install-WindowsUpdate
+
+# Remove Microsoft Teams
+Get-AppxPackage MicrosoftTeams* | Remove-AppxPackage
+Get-AppxPackage -Name MicrosoftTeams | Remove-AppxPackage
+
+# Get Drives and display free space in GB
+Get-PSDrive
+
+# Get Mapped drives using the WMI Object
+Get-WmiObject -ClassName Win32_MappedLogicalDisk | Select PSComputerName, Name,ProviderName
+
+# Get Mapped drives using the CIM Object model
+Get-CimInstance -ClassName Win32_MappedLogicalDisk | Select SystemName, DeviceID, ProviderName                  
+
+# map Z drives
+New-PSDrive -Name Z -PSProvider FileSystem -Root "\\ServerName\ShareName" -Persist -Credential $cre -Scope Global
+
+# Type the following to get the list of Installed updates
+Get-Hotfix
+
+get-wurebootstatus
+
+#	To get the System last Bootup Time 
+Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object LastBootUpTime
+
+Get-AppxPackage –AllUsers | Select Name, PackageFullName
+Get-AppxPackage –AllUsers
+
+#	Sales Machine
+start-process citrixreceiverweb.exe /SILENT
+
